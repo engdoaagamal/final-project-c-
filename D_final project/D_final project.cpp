@@ -157,16 +157,7 @@ public :
 };
 int main()
 {
-    /*cout << fixed << setprecision(2);
-    student s("Ali", 123);
-
-    s.setcourse("CS101", "Programming", 95, 3);
-    s.setcourse("MA101", "Math", 88, 3);
-    s.setcourse("PH101", "Physics", 76, 3);
-
-    s.showcoursesdegree();
-
-    cout << "Final GPA = " << s.calc_gpa() << endl;*/
+    
     
         vector<student> students;
         int choice;
@@ -225,7 +216,7 @@ int main()
                         students.erase(students.begin() + i);
                         cout << "Student removed\n";
                         found = true;
-                        break; // ãåã ÚÔÇä äæŞİ ÈÚÏ ÇáÍĞİ
+                        break; 
                     }
                 }
 
