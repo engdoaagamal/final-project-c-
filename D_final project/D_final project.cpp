@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <string>
+
 using namespace std;
 class course {
 
@@ -87,28 +89,35 @@ class course {
     }
 };
 class person {
-
+private:
     string name;
 public:
     person(string n) {
-        // cout << "welcome from person\n";
+      //  cout << "welcome from person\n";
         name = n;
     }
     person() {
         cout << "welcome from person\n";
         name = "";
     }
+    string getname()const {
+        return name;
+    }
 };
 class student :public  person {
-public :
+private:
     int id;
     double Gpa = 0;
     map<string, course>courses;
+public :
+    student() { id = 0; Gpa = 0.0; }
     student(string n, int id) : person(n)
     {
         
         this->id = id;
     }
+    int getId()const { return id; }
+    //map<string, course>getcourses()const { return courses; }
     void setcourse(string c_code,string n, double g,int h)
         {
         course c(c_code,n,g,h);
@@ -126,6 +135,7 @@ public :
     }
     double getGpa()
     {
+        Gpa= calc_gpa();
         return Gpa;
     }
     void showcourses()
@@ -155,7 +165,81 @@ public :
         this->Gpa = totalsum / totalhours;
         return Gpa;
     }
+    void printstd() {
+        cout << "ID: " << this->id
+            << " Name: " <<this->getname()
+            << " GPA: " << this->calc_gpa() << endl;
+    }
 };
+bool checkexiststd(int newid, const vector<student> & students) {
+    bool exists = false;
+    for (auto& s : students) {
+        if (s.getId() == newid) {
+            exists = true;
+            break;
+        }
+    }
+    return exists;
+}
+void inputstddetails(int &id,string &name) {
+    cout << "Enter ID: ";
+    cin >> id;
+    cin.ignore();
+    cout << "Enter Name: ";
+    getline(cin, name);
+}
+bool removestd(int stdid, vector<student>& students) {
+    bool found = false;
+    for (int i = 0; i < students.size(); i++) {
+        if (students[i].getId() == stdid) {
+            students.erase(students.begin() + i);
+            cout << "Student removed\n";
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
+
+bool searchstd(int stdid, vector<student>& students) {
+    bool found = false;
+    for ( auto& s : students) {
+        if (s.getId() == stdid) {
+            cout << "Found: "<< endl;
+            s.printstd();
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
+int findStudentIndex(int stdid,const  vector<student>& students) {
+    for (int i = 0; i < students.size(); i++) {
+        if (students[i].getId() == stdid) {
+            return i;
+        }
+    }
+    return -1;
+}
+void inputcourse(string &code, string &name,double &grade,int &hour) {
+    cout << "Enter course code: ";
+    cin >> code;
+    cin.ignore();
+    cout << "Enter course name: ";
+    getline(cin, name);
+    cout << "Enter grade (0-100): ";
+    cin >> grade;
+    cout << "Enter hours:  ";
+    cin >> hour;
+}
+
+void printAll(vector<student>& students) {
+    for (auto& s : students) {
+        s.printstd();
+    }
+}
+
+
 int main()
 {
     
@@ -179,22 +263,8 @@ int main()
             if (choice == 1) {
                 int id;
                 string name;
-
-                cout << "Enter ID: ";
-                cin >> id;
-
-                cout << "Enter Name: ";
-                cin >> name;
-
-                // check unique ID
-                bool exists = false;
-                for (auto& s : students) {
-                    if (s.id == id) {
-                        exists = true;
-                        break;
-                    }
-                }
-
+                inputstddetails(id,name);
+               bool exists= checkexiststd(id,students);
                 if (exists) {
                     cout << "ID already exists!\n";
                 }
@@ -210,17 +280,7 @@ int main()
                 cout << "Enter ID to remove: ";
                 cin >> id;
 
-                bool found = false;
-
-                for (int i = 0; i < students.size(); i++) {
-                    if (students[i].id == id) {
-                        students.erase(students.begin() + i);
-                        cout << "Student removed\n";
-                        found = true;
-                        break; 
-                    }
-                }
-
+                bool found= removestd(id, students);
                 if (!found) {
                     cout << "Student not found\n";
                 }
@@ -231,25 +291,13 @@ int main()
                 cout << "Enter ID to search: ";
                 cin >> id;
 
-                bool found = false;
-                for (auto& s : students) {
-                    if (s.id == id) {
-                        cout << "Found: " << s.name << " GPA: " << s.getGpa() << endl;
-                        found = true;
-                        break;
-                    }
-                }
-
+                bool found = searchstd( id, students);
                 if (!found)
                     cout << "Student not found\n";
             }
 
             else if (choice == 4) {
-                for (auto& s : students) {
-                    cout << "ID: " << s.id
-                        << " Name: " << s.name
-                        << " GPA: " << s.calc_gpa() << endl;
-                }
+                printAll(students);
             }
 
             else if (choice == 5) {
@@ -257,33 +305,20 @@ int main()
                 cout << "Enter student ID: ";
                 cin >> id;
 
-                bool found = false;
-
-                for (auto& s : students) {
-                    if (s.id == id) {
+                int found = findStudentIndex(id,students);
+                
+                    if (found>=0) {
                         string code, name;
                         double grade;
                         int hour;
-
-                        cout << "Enter course code: ";
-                        cin >> code;
-                        cout << "Enter course name: ";
-                        cin >> name;
-                        cout << "Enter grade (0-100): ";
-                        cin >> grade;
-                        cout << "Enter hours:  ";
-                        cin >> hour;
-
-                        s.setcourse(code, name, grade, hour);
+                        inputcourse(code, name, grade, hour);
+                      students[found].setcourse(code, name, grade, hour);
                         cout << "Course added\n";
-
-                        found = true;
-                        break;
                     }
-                }
-
-                if (!found)
-                    cout << "Student not found\n";
+                    else 
+                    {
+                        cout << "Student not found\n";
+                    }
             }
 
             else if (choice == 6) {
@@ -291,24 +326,24 @@ int main()
                 cout << "Enter student ID: ";
                 cin >> id;
 
-                bool found = false;
+                int found = findStudentIndex(id, students);
 
-                for (auto& s : students) {
-                    if (s.id == id) {
-                        s.showcoursesdegree();
-                        found = true;
-                        break;
+                
+                if (found>= 0) {
+                    students[found].showcoursesdegree();
+                        
                     }
-                }
-
-                if (!found)
+                else
+                {
                     cout << "Student not found\n";
+                }
+                    
             }
 
             else if (choice == 7) {
                 sort(students.begin(), students.end(),
-                    [](student& a, student& b) {
-                        return a.calc_gpa() > b.calc_gpa();
+                    []( student& a,  student& b) {
+                        return a.getGpa() > b.getGpa();
                     });
 
                 cout << "Students sorted by GPA\n";

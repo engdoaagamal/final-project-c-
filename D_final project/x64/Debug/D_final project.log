@@ -1,3 +1,3 @@
 ﻿  D_final project.cpp
-D:\D_final project\D_final project\D_final project.cpp(80,21): warning C4244: 'return': conversion from 'const double' to 'float', possible loss of data
+D:\D_final project\D_final project\D_final project.cpp(82,21): warning C4244: 'return': conversion from 'const double' to 'float', possible loss of data
   D_final project.vcxproj -> D:\D_final project\x64\Debug\D_final project.exe
