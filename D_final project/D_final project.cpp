@@ -87,10 +87,11 @@ class course {
     }
 };
 class person {
-public:
+
     string name;
+public:
     person(string n) {
-        cout << "welcome from person\n";
+        // cout << "welcome from person\n";
         name = n;
     }
     person() {
